@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="vue.js"></script>
+</head>
+<body>
+
+    <hello-word></hello-word>
+    <br>
+    <welcome-message :name="name" :gender="gender"></welcome-message>
+
+    <input type="name" v-model="name">
+
+    <h1>AÑos de experiencia</h1>
+
+    <template v-for="tech in techs">
+        <years-exp :years.sync="tech.years" :tech="tech.name"></years-exp>
+    </template>
+
+
+    <h1>Tienes experiencia con back-end?</h1>
+    <ul v-for="tech in techs | orderBy 'years' -1 | years | type 'backend' ">
+        <li>{{ tech.name }}</li>
+    </ul>
+
+    <h1>Tienes experiencia con front-end?</h1>
+    <ul v-for="tech in techs | orderBy 'years' -1 | years | type 'frontend'">
+        <li>{{ tech.name }}</li>
+    </ul>
+
+    <h1>Eres un experto?</h1>
+    <ul v-for="tech in techs | orderBy 'years' -1 | major 5 1000 ">
+        <li>{{ tech.name }}</li>
+    </ul>
+
+    <h1>No Tienes experiencia ?</h1>
+    <ul v-for="tech in techs | orderBy 'years' -1 | major 0 0 ">
+        <li>{{ tech.name }}</li>
+    </ul>
+
+    <pre>
+        {{ $data | json }}
+    </pre>
+
+    <script type="text/template" id="ask">
+        <p>¿Cuántos años de experiencia tienes con {{ tech }}?</p>
+
+        <p>
+            Respuesta: <strong>{{ years }}</strong>
+
+            <button type="button"
+                    class="btn"
+                    @click="add">+</button>
+
+            <button type="button"
+                    :disabled="years == 0"
+                    class="btn"
+                    @click="sub">-</button>
+        </p>
+        <p><strong>{{ exp }}</strong></p>
+    </script>
+
+    <script type="text/template" id="welcome_template">
+        <h1>{{ gender == 'm' ? 'Bienvenido' : 'Bienvenida' }} , {{ name }}</h1>
+    </script>
+
+    <script>
+        
+        Vue.filter('years' , function (techs) {
+            return techs.filter(function (tech) {
+                return tech.years > 0;
+            });
+        });
+
+        Vue.filter('type' , function (techs , type) {
+            return techs.filter(function (tech) {
+                return tech.type == type;
+            });
+        });
+
+        Vue.filter('major' , function (techs , min  , max) {
+            return techs.filter(function (tech) {
+                return tech.years >=  min  && tech.years <=  max ;
+            });
+        });
+
+
+        Vue.component('hello-word' ,  {
+            template: '<h2>Hola Mundo</h2>'
+        });
+
+        Vue.component('welcome-message' , {
+            template : '#welcome_template',
+            props : {
+                gender: {type: String ,required: false} ,
+                name: {type: String , required: true}
+            }
+        });
+
+        Vue.component('years-exp' , {
+            template : '#ask',
+            methods: {
+                add:  function () {
+                    this.years++;
+                },
+                sub: function (){
+                    this.years--;
+                }
+            },
+            computed: {
+                exp: function () {
+                    if (this.years <= 2){
+                        return "Principiante";
+                    }else if(this.years > 2 && this.years <= 5){
+                        return "Intermedio";
+                    }else{
+                        return "Experto";
+                    }
+                }
+            },
+            props : {
+                years: {type: Number ,required: true} ,
+                tech: {type: String , required: true}
+            }
+        });
+
+        new Vue({
+            el : "body",
+            data: {
+                name: 'Johan',
+                gender: 'm',
+                techs: [
+                    {name: 'PHP', years: 0 , type: 'backend'},
+                    {name: 'JS', years: 0, type: 'frontend'},
+                    {name: 'HTML', years: 0 , type: 'frontend'}
+                ]
+            }
+        });
+
+    </script>
+</body>
+</html>

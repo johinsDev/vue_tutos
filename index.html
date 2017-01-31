@@ -16,17 +16,19 @@
 <div class="container">
 
     <template v-if="name">
-        <h1>{{ gender == 'm' ? 'Bienvenido' : 'Bienvenida' }} , {{ name }}</h1>
-        <h1>Tu nombre al reves es {{ name.split('').reverse().join('') }}</h1>
+        <h1>{{ welcome_message }} , {{ name | ucwords }}</h1>
+        <h1>Tu nombre al reves es {{ name | reverse  }}</h1>
         <p>Esperos que disfrutes tu visita</p>
     </template>
 
     <p v-else>Por favor escribe tu nombre</p>
 
     <form action="" @submit.prevent="signUp(false)">
-        <input type="text" class="form-control" v-model="name">
+        <input type="text" class="form-control" v-model="first_name" placeholder="Nombre">
+        <input type="text" class="form-control" v-model="last_name" placeholder="Apellidos">
         <label for="">Femenino : <input type="radio" v-model="gender" value="f"></label>
         <label for="">Masculino : <input type="radio" v-model="gender" value="m"></label>
+        <label for="">¿Hablas Español? <input type="checkbox" v-model="spanish"></label>
         <p>Cunatos años de experiencia tienes con php?</p>
         <p>Respuesta {{ years_php }}</p>
         <button class="btn" type="button" @click="years(true)" :class="{btn:true , 'btn-danger':years_php >10 }" :style="getAddYearButtonStyles()"> + </button>
@@ -36,6 +38,10 @@
             <button type="submit" class="btn btn-primary" @click.prevent="signUp(true , $event)">Registrate y sal del sistema</button>
         </p>
     </form>
+
+    <ul v-for="tech in techs | orderBy 'name' -1">
+        <li>{{ tech.name }}</li>
+    </ul>
 
     <img src="logo.png" alt="" :title="years_php" height="100" width="100">
     
@@ -55,12 +61,51 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script>
+    Vue.filter('ucwords' , function (value) {
+       return value.split(' ').map(function (word) {
+           return word.charAt(0).toUpperCase() + word.slice(1);
+       }).join(' ');
+    });
+
+    Vue.filter('reverse' , function (value) {
+        return value.split('').reverse().join('');
+    });
+
     new Vue({
         el : "#app",
         data :  {
             name: "",
             gender: 'm',
-            years_php : 6
+            years_php : 6,
+            spanish: true,
+            first_name: '',
+            last_name: '',
+            techs: [
+                {name: 'PHP', years: 0},
+                {name: 'JS', years: 0},
+                {name: 'HTML', years: 0},
+                {name: 'NET', years: 0},
+                {name: 'RUBY', years: 0},
+                {name: 'PYTHON', years: 0}
+            ]
+        },
+        computed: {
+            welcome_message: function () {
+                if (this.spanish) {
+                    return this.gender == 'm' ? 'Bienvenido' : 'Bienvenida';
+                }
+                return 'Welcome';
+            },
+            name: function () {
+                if (this.first_name || this.last_name) {
+                    return this.first_name + ' ' + this.last_name;
+                }
+
+                return '';
+            },
+            name_reverse: function () {
+                return this.name.split('').reverse().join('');
+            }
         },
         methods: {
             signUp: function (logout) {

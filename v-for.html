@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .favorite {
+            text-decoration:line-through;
+            color: orange;
+        }
+    </style>
+    <script src="vue.js"></script>
+</head>
+<body class="container">
+
+    <ul>
+        <li v-for="note in notes" :class=" {'favorite': note.favorite } ">
+            {{ $index + 1 }}: {{ note.text }} por {{ note.author }}
+            <a v-if="!note.favorite" href="" @click.prevent="favorite($index)">Marcar como favorita</a>
+            <a v-else href="" @click.prevent="unFavorite($index)">Desmarcar como favorita</a>
+        </li>
+    </ul>
+
+    <form @submit.prevent="createNote" class="form">
+        <textarea v-model="new_note.text" class="form-control" placeholder="Nota"></textarea>
+        <input v-model="new_note.author" type="text" class="form-control" placeholder="Autor">
+        <button type="submit" class="btn btn-primary">Agregar nota</button>
+    </form>
+
+    <script>
+        new Vue({
+            el : "body",
+            data: {
+                notes: [
+                    {
+                        text: 'v-for es la directiva que utilizamos para iterar una lista',
+                        author: 'Duilio',
+                        favorite: false
+                    },
+                    {
+                        text: '@click se utiliza como un alias de v-on:click',
+                        author: 'Sileence',
+                        favorite: false
+                    },
+                    {
+                        text: 'Con Vue puedes crear tus propios componentes',
+                        author: 'Styde',
+                        favorite: true
+                    }
+                ],
+                new_note: {text: '', author: '' , favorite: false}
+            },
+            methods: {
+                createNote: function () {
+                    this.notes.push(this.new_note);
+                    this.new_note = {text: '', author: '' ,  favorite: false};
+                },
+                favorite: function (index) {
+                    this.notes[index].favorite = true;
+                },
+                unFavorite: function (index) {
+                    this.notes[index].favorite = false;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
