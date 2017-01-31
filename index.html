@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="vue.js"></script>
+</head>
+<body id="app">
+<div class="container">
+
+    <template v-if="name">
+        <h1>{{ gender == 'm' ? 'Bienvenido' : 'Bienvenida' }} , {{ name }}</h1>
+        <h1>Tu nombre al reves es {{ name.split('').reverse().join('') }}</h1>
+        <p>Esperos que disfrutes tu visita</p>
+    </template>
+
+    <p v-else>Por favor escribe tu nombre</p>
+
+    <form action="" @submit.prevent="signUp(false)">
+        <input type="text" class="form-control" v-model="name">
+        <label for="">Femenino : <input type="radio" v-model="gender" value="f"></label>
+        <label for="">Masculino : <input type="radio" v-model="gender" value="m"></label>
+        <p>Cunatos años de experiencia tienes con php?</p>
+        <p>Respuesta {{ years_php }}</p>
+        <button class="btn" type="button" @click="years(true)" :class="{btn:true , 'btn-danger':years_php >10 }" :style="getAddYearButtonStyles()"> + </button>
+        <button class="btn" type="button" @click="years(false)" :disabled="years_php == 0"> - </button>
+        <p v-show="name">
+            <button type="submit" class="btn btn-primary">Registrate</button>
+            <button type="submit" class="btn btn-primary" @click.prevent="signUp(true , $event)">Registrate y sal del sistema</button>
+        </p>
+    </form>
+
+    <img src="logo.png" alt="" :title="years_php" height="100" width="100">
+    
+    <div class="alert alert-danger">
+        <ul>
+            <li v-if="name == ''" >Este campo es obligatorio</li>
+            <li v-if="name.length < 2 ">El nombre es muy corto</li>
+        </ul>
+    </div>
+
+    <div class="well">
+        {{ $data | json}}
+    </div>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script>
+    new Vue({
+        el : "#app",
+        data :  {
+            name: "",
+            gender: 'm',
+            years_php : 6
+        },
+        methods: {
+            signUp: function (logout) {
+                alert(this.name + ', por favor espera mientras te registramos.');
+
+                if (logout){
+                    alert('Saliendo del sistema');
+                }
+            },
+            years: function (plus) {
+                if (plus){
+                    this.years_php++;
+                }else{
+                    if (this.years_php > 1){
+                        this.years_php--;
+                    }
+                }
+            }, getAddYearButtonStyles: function () {
+                return {'font-size': 10+this.years_php+'px'};
+            }
+        }
+    })
+</script>
+</body>
+</html>
